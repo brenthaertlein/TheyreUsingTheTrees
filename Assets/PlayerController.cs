@@ -35,6 +35,12 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        Move();
+    }
+
+    private void Move()
+    {
+
         if (movementInput == Vector2.zero)
         {
             animator.SetBool("IsMoving", false);
@@ -56,7 +62,6 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("IsMoving", moved);
 
         spriteRenderer.flipX = movementInput.x < 0;
-
     }
 
     private bool TryMove(Vector2 direction)
