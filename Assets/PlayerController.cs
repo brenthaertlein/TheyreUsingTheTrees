@@ -8,12 +8,14 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 1f;
     public float collisionOffset = 0.05f;
     public ContactFilter2D movementFilter;
+    public SwordAttack swordAttack;
 
     Animator animator;
     Rigidbody2D rb;
     SpriteRenderer spriteRenderer;
     Vector2 movementInput;
     List<RaycastHit2D> castCollisions = new();
+    Direction direction = Direction.RIGHT;
 
     // Start is called before the first frame update
     void Start()
@@ -33,9 +35,34 @@ public class PlayerController : MonoBehaviour
     {
         movementInput = inputValue.Get<Vector2>();
     }
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         Move();
+        SetDirection();
+    }
+
+    void OnFire()
+    {
+        animator.SetTrigger("SwordAttack");
+    }
+
+    public void Attack()
+    {
+        swordAttack.Attack();
+    }
+
+    public void StopAttack()
+    {
+        swordAttack.StopAttack();
+    }
+
+    public void SetMoveSpeed(float speed)
+    {
+        moveSpeed = speed;
+    }
+
+    public void SetIdle()
+    {
     }
 
     private void Move()
@@ -61,18 +88,24 @@ public class PlayerController : MonoBehaviour
 
         animator.SetBool("IsMoving", moved);
 
-        spriteRenderer.flipX = movementInput.x < 0;
     }
 
-    private bool TryMove(Vector2 direction)
+    private void SetDirection()
     {
-        if (direction == Vector2.zero) { return false; }
+        spriteRenderer.flipX = direction == Direction.LEFT;
+        swordAttack.attackDirection = direction;
+    }
 
-        int collisions = rb.Cast(direction, movementFilter, castCollisions, moveSpeed * Time.fixedDeltaTime + collisionOffset);
+    private bool TryMove(Vector2 movementVector)
+    {
+        if (movementVector == Vector2.zero) { return false; }
+
+        int collisions = rb.Cast(movementVector, movementFilter, castCollisions, moveSpeed * Time.fixedDeltaTime + collisionOffset);
 
         if (collisions == 0)
         {
-            rb.MovePosition(rb.position + moveSpeed * Time.fixedDeltaTime * direction);
+            rb.MovePosition(rb.position + moveSpeed * Time.fixedDeltaTime * movementVector);
+            direction = movementInput.x < 0 ? Direction.LEFT : Direction.RIGHT;
             return true;
         }
 
