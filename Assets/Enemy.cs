@@ -8,6 +8,8 @@ public class Enemy : MonoBehaviour
     public float moveSpeed = 0.1f;
     public float collisionOffset = 0.01f;
     public ContactFilter2D movementFilter;
+    public AudioClip damageSound;
+    public AudioClip deathSound;
 
     Animator animator;
     AudioSource audioSource;
@@ -66,6 +68,7 @@ public class Enemy : MonoBehaviour
     }
     public void TakeDamage(float damage)
     {
+        audioSource.clip = damageSound;
         audioSource.Play();
         Health -= damage;
         print("Enemy took " + damage + " damage, " + Health + " health remaining");
@@ -74,6 +77,8 @@ public class Enemy : MonoBehaviour
     public void Die()
     {
         animator.SetTrigger("Defeated");
+        audioSource.clip = deathSound;
+        audioSource.Play();
     }
 
     public void Destroy()

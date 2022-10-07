@@ -155,6 +155,8 @@ MonoBehaviour:
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
+  damageSound: {fileID: 8300000, guid: 0d3593ee34c96f44c89aca17d112dfbb, type: 3}
+  deathSound: {fileID: 8300000, guid: 730da3645af9f25478a7663e4d8122fa, type: 3}
 --- !u!95 &4951502864769332608
 Animator:
   serializedVersion: 4
