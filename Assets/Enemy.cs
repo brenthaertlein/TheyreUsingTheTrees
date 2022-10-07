@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     public ContactFilter2D movementFilter;
 
     Animator animator;
+    AudioSource audioSource;
     Rigidbody2D rb;
     Vector3 initialPostion;
     Vector3 destinationPosition;
@@ -32,6 +33,7 @@ public class Enemy : MonoBehaviour
     void Awake()
     {
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody2D>();
     }
     void Start()
@@ -64,6 +66,7 @@ public class Enemy : MonoBehaviour
     }
     public void TakeDamage(float damage)
     {
+        audioSource.Play();
         Health -= damage;
         print("Enemy took " + damage + " damage, " + Health + " health remaining");
     }

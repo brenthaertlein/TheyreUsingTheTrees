@@ -8,11 +8,13 @@ public partial class SwordAttack : MonoBehaviour
     public Direction attackDirection;
     public float damage = 1.5f;
 
+    AudioSource audioSource;
     Collider2D swordCollider;
     Vector2 initialPosition;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         swordCollider = GetComponent<Collider2D>();
         swordCollider.enabled = false;
         initialPosition = transform.position;
@@ -20,6 +22,7 @@ public partial class SwordAttack : MonoBehaviour
 
     public void Attack()
     {
+        audioSource.Play();
         swordCollider.enabled = true;
         switch (attackDirection)
         {
