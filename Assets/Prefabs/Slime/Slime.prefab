@@ -138,6 +138,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   drop: {fileID: 1233105574369644785, guid: e978feecf9c40404eb02b3030ea6348a, type: 3}
+  moveSpeed: 0.1
 --- !u!95 &4951502864769332608
 Animator:
   serializedVersion: 4

@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public Pickup drop;
+    public float moveSpeed = 0.1f;
+    public float collisionOffset = 0.01f;
+    public ContactFilter2D movementFilter;
 
     Animator animator;
-
-    public Pickup drop;
+    Rigidbody2D rb;
+    Vector3 initialPostion;
+    Vector3 destinationPosition;
+    List<RaycastHit2D> castCollisions = new();
 
     public float Health
     {
@@ -21,9 +27,40 @@ public class Enemy : MonoBehaviour
 
     private float health = 10;
 
-    void Start()
+    private Vector3 NextDirection() => initialPostion + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * Random.Range(1f, 3f);
+
+    void Awake()
     {
         animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
+    }
+    void Start()
+    {
+        initialPostion = transform.position;
+        destinationPosition = NextDirection();
+    }
+
+    void FixedUpdate()
+    {
+        float distance = Vector3.Distance(transform.position, destinationPosition);
+        if (distance < 0.5f)
+        {
+            print("Reached destination, setting new destination");
+            destinationPosition = NextDirection();
+            print("Moving to " + destinationPosition.x + ", " + destinationPosition.y);
+            print(distance + " units away from destination");
+        }
+        int collisions = rb.Cast(destinationPosition, movementFilter, castCollisions, moveSpeed * Time.fixedDeltaTime + collisionOffset);
+
+        if (collisions > 0)
+        {
+            print("Obstacle encountered, picking new direction");
+            destinationPosition = NextDirection();
+            print("Moving to " + destinationPosition.x + ", " + destinationPosition.y);
+            print(distance + " units away from destination");
+        }
+
+        transform.position = Vector3.MoveTowards(transform.position, destinationPosition, moveSpeed * Time.fixedDeltaTime);
     }
     public void TakeDamage(float damage)
     {
