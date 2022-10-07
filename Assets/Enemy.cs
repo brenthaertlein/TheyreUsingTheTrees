@@ -7,6 +7,8 @@ public class Enemy : MonoBehaviour
 
     Animator animator;
 
+    public Pickup drop;
+
     public float Health
     {
         set
@@ -36,6 +38,12 @@ public class Enemy : MonoBehaviour
 
     public void Destroy()
     {
+        Drop();
         Destroy(gameObject);
+    }
+
+    public void Drop()
+    {
+        Instantiate(drop, transform.position, transform.rotation);
     }
 }

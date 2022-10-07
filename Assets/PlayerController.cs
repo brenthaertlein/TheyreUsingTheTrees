@@ -17,6 +17,8 @@ public class PlayerController : MonoBehaviour
     List<RaycastHit2D> castCollisions = new();
     Direction direction = Direction.RIGHT;
 
+    private Dictionary<Pickup.PickupType, int> currencies = new();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -63,6 +65,23 @@ public class PlayerController : MonoBehaviour
 
     public void SetIdle()
     {
+    }
+
+    public void Absorb(Pickup pickup)
+    {
+        print("Absorbing " + pickup.amount + " " + pickup.type.ToString().ToLower() + (pickup.amount == 1 ? "" : "s"));
+        if (currencies.ContainsKey(pickup.type))
+        {
+            currencies[pickup.type] += pickup.amount;
+
+        } else
+        {
+            currencies[pickup.type] = pickup.amount;
+        }
+        foreach(KeyValuePair<Pickup.PickupType, int> entry in currencies)
+        {
+            print("Player has " + entry.Value + " " + entry.Key.ToString().ToLower() + (entry.Value == 1 ? "" : "s"));
+        }
     }
 
     private void Move()
