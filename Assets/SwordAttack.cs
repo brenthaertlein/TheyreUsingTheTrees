@@ -7,7 +7,9 @@ public partial class SwordAttack : MonoBehaviour
 
     public Direction attackDirection;
     public float damage = 1.5f;
-
+    public AudioClip clip1;
+    public AudioClip clip2;
+    
     AudioSource audioSource;
     Collider2D swordCollider;
     Vector2 initialPosition;
@@ -22,6 +24,7 @@ public partial class SwordAttack : MonoBehaviour
 
     public void Attack()
     {
+        audioSource.clip = Random.Range(-1f, 1f) <= 0f ? clip1 : clip2;
         audioSource.Play();
         swordCollider.enabled = true;
         switch (attackDirection)

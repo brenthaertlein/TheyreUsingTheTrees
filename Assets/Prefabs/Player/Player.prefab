@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8324419696897963133}
   - component: {fileID: 5522176306376825021}
   m_Layer: 0
-  m_Name: SwordHitbox
+  m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.02}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -58,7 +58,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.16, y: 0.16}
+  m_Size: {x: 0.16, y: 0.24}
   m_EdgeRadius: 0
 --- !u!114 &8324419696897963133
 MonoBehaviour:
@@ -74,6 +74,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackDirection: 0
   damage: 1.5
+  clip1: {fileID: 8300000, guid: 30266917b2fcde84e97651f9116015be, type: 3}
+  clip2: {fileID: 8300000, guid: ccb19a0ef0f5e144a95db5855e565e7b, type: 3}
 --- !u!82 &5522176306376825021
 AudioSource:
   m_ObjectHideFlags: 0

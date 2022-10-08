@@ -7,19 +7,24 @@ public class Enemy : MonoBehaviour
     private enum State { ROAM, CHASE, ATTACK, FLEE, WAIT, DEAD }
     public Pickup drop;
     public float moveSpeed = 0.1f;
+    public float chaseSpeedMultiplier = 1.2f;
+    public float attackSpeedMultiplier = 1.3f;
     public float collisionOffset = 0.01f;
     public ContactFilter2D movementFilter;
     public AudioClip damageSound;
     public AudioClip deathSound;
     public CapsuleCollider2D detectionCollider;
     public float detectionRadius = 1f;
+    public float roamRadius = 3f;
+    public float attackRadius = 1f;
 
     Animator animator;
     AudioSource audioSource;
     Rigidbody2D rb;
     State state = State.ROAM;
-    Vector3 initialPostion;
-    Vector3 destinationPosition;
+    Vector3 initialPosition;
+    Vector3 destinationPosition; 
+    Vector3 targetPosition;
     GameObject target;
     List<RaycastHit2D> castCollisions = new();
 
@@ -35,7 +40,9 @@ public class Enemy : MonoBehaviour
 
     private float health = 10;
 
-    private Vector3 NextDirection() => initialPostion + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * Random.Range(1f, 3f);
+    private Vector3 NextDirection(Vector3 position, float distance) => position + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * Random.Range(distance / 10, distance);
+
+    private Vector3 NextRoamingDirection() => NextDirection(initialPosition, roamRadius);
 
     void Awake()
     {
@@ -45,8 +52,8 @@ public class Enemy : MonoBehaviour
     }
     void Start()
     {
-        initialPostion = transform.position;
-        destinationPosition = NextDirection();
+        initialPosition = transform.position;
+        destinationPosition = NextRoamingDirection();
     }
 
     void FixedUpdate()
@@ -57,30 +64,16 @@ public class Enemy : MonoBehaviour
             return;
         }
         Detect();
-        switch (state)
+    }
+
+    private void Update()
+    {
+        if (state == State.DEAD)
         {
-            case State.ROAM:
-                target = null;
-                Roam();
-                break;
-            case State.ATTACK:
-                Attack();
-                break;
-            case State.CHASE:
-                Chase();
-                break;
-            case State.WAIT:
-                target = null;
-                state = State.ROAM;
-                break;
-            case State.DEAD:
-                // this return is intentional
-                return;
-            default:
-                target = null;
-                state = State.WAIT;
-                break;
+            // this return is intentional
+            return;
         }
+        Act();
     }
     public void TakeDamage(float damage)
     {
@@ -142,26 +135,97 @@ public class Enemy : MonoBehaviour
                         break;
                     case State.ATTACK:
                         break;
+                    case State.FLEE:
+                        Vector3 playerPosition = new Vector3(target.transform.position.x, target.transform.position.y - 0.16f);
+                        float distance = Vector3.Distance(transform.position, playerPosition);
+
+                        if (distance > attackRadius)
+                        {
+                            print("Enemy is fleeing but should chase");
+                            state = State.CHASE;
+                            break;
+                        }
+
+                        if (distance > attackRadius * 2 / 3)
+                        {
+                            print("Enemy is fleeing but should try to attack");
+                            state = State.ATTACK;
+                            break;
+                        }
+                        break;
                     default:
                         state = State.CHASE;
                         break;
                 }
+
                 return;
             }
         }
+        state = State.WAIT;
+    }
 
+    private void Act()
+    {
+
+        switch (state)
+        {
+            case State.ROAM:
+                target = null;
+                Roam();
+                break;
+            case State.ATTACK:
+                Attack();
+                break;
+            case State.CHASE:
+                Chase();
+                break;
+            case State.WAIT:
+                target = null;
+                state = State.ROAM;
+                break;
+            case State.DEAD:
+                // this return is intentional
+                return;
+            case State.FLEE:
+                Flee();
+                break;
+            default:
+                target = null;
+                state = State.WAIT;
+                break;
+        }
     }
 
     private void Attack()
     {
         animator.SetTrigger("Attack");
-        MoveTo(target.transform.position, moveSpeed * 3);
+        if (targetPosition == null)
+        {
+            targetPosition = new Vector3(target.transform.position.x, target.transform.position.y - 0.16f);
+        }
+        float distance = Vector3.Distance(transform.position, targetPosition);
+        if (distance < attackRadius / 3)
+        {
+            targetPosition = NextDirection(transform.position, attackRadius * 2);
+        }
+
+        if (distance > attackRadius * 2 / 3)
+        {
+            targetPosition = new Vector3(target.transform.position.x, target.transform.position.y - 0.16f);
+        }
+        int collisions = rb.Cast(targetPosition, movementFilter, castCollisions, moveSpeed * attackSpeedMultiplier / 3 * Time.fixedDeltaTime + collisionOffset);
+
+        if (collisions > 0)
+        {
+            targetPosition = NextDirection(targetPosition, attackRadius / 3);
+        }
+        MoveTo(targetPosition, moveSpeed * attackSpeedMultiplier);
     }
 
     private void Chase()
     {
         animator.SetTrigger("Chase");
-        MoveTo(target.transform.position, moveSpeed * 2);
+        MoveTo(target.transform.position, moveSpeed * chaseSpeedMultiplier);
     }
 
     private void Roam()
@@ -170,17 +234,20 @@ public class Enemy : MonoBehaviour
         float distance = Vector3.Distance(transform.position, destinationPosition);
         if (distance < 0.16f)
         {
-            destinationPosition = NextDirection();
-            print("Reached destination, setting new destination: " + destinationPosition);
+            destinationPosition = NextRoamingDirection();
         }
         int collisions = rb.Cast(destinationPosition, movementFilter, castCollisions, moveSpeed * Time.fixedDeltaTime + collisionOffset);
 
         if (collisions > 0)
         {
-            destinationPosition = NextDirection();
-            print("Obstacle encountered, picking new direction: " + destinationPosition);
+            destinationPosition = NextRoamingDirection();
         }
         MoveTo(destinationPosition, moveSpeed);
+    }
+
+    private void Flee()
+    {
+        MoveTo(targetPosition, moveSpeed * chaseSpeedMultiplier * -1);
     }
 
     private void MoveTo(Vector3 destination, float speed)
@@ -191,5 +258,25 @@ public class Enemy : MonoBehaviour
     public void Drop()
     {
         Instantiate(drop, transform.position, transform.rotation);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+
+        if (collision.CompareTag("Player"))
+        {
+            print("Player hit!");
+            state = State.FLEE;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+
+        if (collision.CompareTag("Player"))
+        {
+            print(state.ToString());
+            state = State.FLEE;
+        }
     }
 }

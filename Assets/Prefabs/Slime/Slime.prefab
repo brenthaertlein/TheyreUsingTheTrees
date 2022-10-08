@@ -140,7 +140,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drop: {fileID: 1233105574369644785, guid: e978feecf9c40404eb02b3030ea6348a, type: 3}
   moveSpeed: 0.1
-  collisionOffset: 0.01
+  chaseSpeedMultiplier: 1.03
+  attackSpeedMultiplier: 1.05
+  collisionOffset: 0.12
   movementFilter:
     useTriggers: 0
     useLayerMask: 0
@@ -158,6 +160,9 @@ MonoBehaviour:
   damageSound: {fileID: 8300000, guid: 0d3593ee34c96f44c89aca17d112dfbb, type: 3}
   deathSound: {fileID: 8300000, guid: 730da3645af9f25478a7663e4d8122fa, type: 3}
   detectionCollider: {fileID: 0}
+  detectionRadius: 1
+  roamRadius: 3
+  attackRadius: 1
 --- !u!95 &4951502864769332608
 Animator:
   serializedVersion: 4
