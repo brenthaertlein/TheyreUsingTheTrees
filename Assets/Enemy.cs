@@ -157,7 +157,6 @@ public class Enemy : MonoBehaviour
                         state = State.CHASE;
                         break;
                 }
-
                 return;
             }
         }
@@ -275,7 +274,6 @@ public class Enemy : MonoBehaviour
 
         if (collision.CompareTag("Player"))
         {
-            print(state.ToString());
             state = State.FLEE;
         }
     }
