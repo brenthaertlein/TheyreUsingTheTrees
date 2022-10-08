@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 358853925538921000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.6475601, y: -0.15698723, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -157,6 +157,7 @@ MonoBehaviour:
     maxNormalAngle: 0
   damageSound: {fileID: 8300000, guid: 0d3593ee34c96f44c89aca17d112dfbb, type: 3}
   deathSound: {fileID: 8300000, guid: 730da3645af9f25478a7663e4d8122fa, type: 3}
+  detectionCollider: {fileID: 0}
 --- !u!95 &4951502864769332608
 Animator:
   serializedVersion: 4
