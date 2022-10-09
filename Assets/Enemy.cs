@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, Damageable
 {
     private enum State { ROAM, CHASE, ATTACK, FLEE, WAIT, DEAD }
     public Pickup drop;
@@ -77,6 +77,7 @@ public class Enemy : MonoBehaviour
     }
     public void TakeDamage(float damage)
     {
+        state = State.FLEE;
         audioSource.clip = damageSound;
         audioSource.Play();
         Health -= damage;
@@ -141,14 +142,12 @@ public class Enemy : MonoBehaviour
 
                         if (distance > attackRadius)
                         {
-                            print("Enemy is fleeing but should chase");
                             state = State.CHASE;
                             break;
                         }
 
                         if (distance > attackRadius * 2 / 3)
                         {
-                            print("Enemy is fleeing but should try to attack");
                             state = State.ATTACK;
                             break;
                         }

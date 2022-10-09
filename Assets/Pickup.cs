@@ -32,7 +32,6 @@ public class Pickup : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        print(collision.tag);
         if (collision.CompareTag("Player"))
         {
             PlayerController player = collision.GetComponent<PlayerController>();

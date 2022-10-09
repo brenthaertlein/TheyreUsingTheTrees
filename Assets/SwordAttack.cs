@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class SwordAttack : MonoBehaviour
+public class SwordAttack : MonoBehaviour
 {
 
     public Direction attackDirection;
@@ -20,8 +20,8 @@ public partial class SwordAttack : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         swordCollider = GetComponent<Collider2D>();
         colliders = GetComponents<Collider2D>();
-        swordCollider.enabled = false;
         initialPosition = transform.position;
+        StopAttack();
     }
 
     public void Attack()
@@ -53,10 +53,13 @@ public partial class SwordAttack : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Enemy")
+        if (collision.CompareTag("Enemy"))
         {
-            Enemy enemy = collision.GetComponent<Enemy>();
-            enemy.TakeDamage(damage);
+            Damageable[] targets = collision.GetComponentsInParent<Damageable>();
+            foreach (Damageable target in targets)
+            {
+                target.TakeDamage(damage);
+            }
         }
     }
 }

@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
 
     Animator animator;
     Rigidbody2D rb;
-    Collider2D collider;
+    Collider2D movementCollider;
     SpriteRenderer spriteRenderer;
     Vector2 movementInput;
     List<RaycastHit2D> castCollisions = new();
@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        collider = GetComponent<Collider2D>();
+        movementCollider = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -115,7 +115,7 @@ public class PlayerController : MonoBehaviour
     {
         if (movementVector == Vector2.zero) { return false; }
 
-        int collisions = collider.Cast(movementVector, movementFilter, castCollisions, moveSpeed * Time.fixedDeltaTime + collisionOffset);
+        int collisions = movementCollider.Cast(movementVector, movementFilter, castCollisions, moveSpeed * Time.fixedDeltaTime + collisionOffset);
 
         if (collisions == 0)
         {
