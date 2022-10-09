@@ -7,6 +7,7 @@ public class Spawner : MonoBehaviour, Damageable
 {
     public float spawnRadius = 0.5f;
     public int maxSpawns = 3;
+    public int spawnInterval = 5;
     public Enemy enemy;
 
     public float Health
@@ -27,11 +28,21 @@ public class Spawner : MonoBehaviour, Damageable
         print("Spawner took " + damage + " damage, " + Health + " health remaining");
     }
 
-    void FixedUpdate()
+    void Start()
     {
-        if (CheckNearbySpawns() < maxSpawns)
+        StartCoroutine(SpawnCoroutine());
+    }
+
+    private IEnumerator SpawnCoroutine()
+    {
+        while (true)
         {
-            Spawn();
+            yield return new WaitForSeconds(spawnInterval);
+
+            if (CheckNearbySpawns() < maxSpawns)
+            {
+                Spawn();
+            }
         }
     }
 
