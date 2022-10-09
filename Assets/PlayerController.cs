@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
 
     Animator animator;
     Rigidbody2D rb;
+    Collider2D collider;
     SpriteRenderer spriteRenderer;
     Vector2 movementInput;
     List<RaycastHit2D> castCollisions = new();
@@ -20,18 +21,12 @@ public class PlayerController : MonoBehaviour
 
     private Dictionary<Pickup.PickupType, int> currencies = new();
 
-    // Start is called before the first frame update
     void Start()
     {
+        collider = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     void OnMove(InputValue inputValue)
@@ -120,7 +115,7 @@ public class PlayerController : MonoBehaviour
     {
         if (movementVector == Vector2.zero) { return false; }
 
-        int collisions = rb.Cast(movementVector, movementFilter, castCollisions, moveSpeed * Time.fixedDeltaTime + collisionOffset);
+        int collisions = collider.Cast(movementVector, movementFilter, castCollisions, moveSpeed * Time.fixedDeltaTime + collisionOffset);
 
         if (collisions == 0)
         {

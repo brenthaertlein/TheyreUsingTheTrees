@@ -12,21 +12,26 @@ public partial class SwordAttack : MonoBehaviour
     
     AudioSource audioSource;
     Collider2D swordCollider;
+    Collider2D[] colliders;
     Vector2 initialPosition;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
         swordCollider = GetComponent<Collider2D>();
+        colliders = GetComponents<Collider2D>();
         swordCollider.enabled = false;
         initialPosition = transform.position;
     }
 
     public void Attack()
     {
+        foreach (Collider2D collider in colliders)
+        {
+            collider.enabled = true;
+        }
         audioSource.clip = Random.Range(-1f, 1f) <= 0f ? clip1 : clip2;
         audioSource.Play();
-        swordCollider.enabled = true;
         switch (attackDirection)
         {
             case Direction.LEFT: 
@@ -40,7 +45,10 @@ public partial class SwordAttack : MonoBehaviour
 
     public void StopAttack()
     {
-        swordCollider.enabled = false;
+        foreach (Collider2D collider in colliders)
+        {
+            collider.enabled = false;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
